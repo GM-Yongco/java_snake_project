@@ -37,6 +37,9 @@ public class GamePanel extends JPanel implements ActionListener{
     boolean running = false;
     Random random;
     Timer timer;
+    
+    //fruit
+    Fruit currentFruit;
 
     GamePanel() {
         random = new Random();
@@ -44,6 +47,7 @@ public class GamePanel extends JPanel implements ActionListener{
         this.setBackground(Color.DARK_GRAY);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
+        currentFruit = new Fruit(0, 0, 1);
         play();
         
          this.addMouseListener(new MouseAdapter() {
@@ -66,27 +70,27 @@ public class GamePanel extends JPanel implements ActionListener{
         });
         
     }	
-     private void restartGame() {
+    private void restartGame() {
         length = 5; // Reset snake length
-    foodEaten = 0; // Reset score
-    direction = 'R'; // Reset snake direction
-    running = true; // Set game state to running
-    
-    int initialSnakeX = WIDTH / 2; // Set initial X coordinate
-    int initialSnakeY = HEIGHT / 2; // Set initial Y coordinate
+        foodEaten = 0; // Reset score
+        direction = 'R'; // Reset snake direction
+        running = true; // Set game state to running
 
-     for (int i = 0; i < length; i++) {
-        x[i] = initialSnakeX - i * UNIT_SIZE; // Adjust X-coordinate for each segment
-        y[i] = initialSnakeY; // Set Y-coordinate (same for all segments)
-    }
+        int initialSnakeX = WIDTH / 2; // Set initial X coordinate
+        int initialSnakeY = HEIGHT / 2; // Set initial Y coordinate
 
-    // Add initial food after restarting
-    addFood();
+         for (int i = 0; i < length; i++) {
+            x[i] = initialSnakeX - i * UNIT_SIZE; // Adjust X-coordinate for each segment
+            y[i] = initialSnakeY; // Set Y-coordinate (same for all segments)
+        }
 
-    // Start the game loop again if needed
-    if (!timer.isRunning()) {
-        timer.start();
-    }
+        // Add initial food after restarting
+        addFood();
+
+        // Start the game loop again if needed
+        if (!timer.isRunning()) {
+            timer.start();
+        }
     }
 
     public void play() {
@@ -124,16 +128,15 @@ public class GamePanel extends JPanel implements ActionListener{
     public void checkFood() {
         if(x[0] == foodX && y[0] == foodY) {
             length++;
-            foodEaten++;
+            foodEaten += currentFruit.pointVal; //adds fruit's pointVal to the score
             addFood();
         }
     }
 
     public void draw(Graphics graphics) {
 
-        if (running) {
-            graphics.setColor(new Color(210, 115, 90));
-            graphics.fillOval(foodX, foodY, UNIT_SIZE, UNIT_SIZE);
+        if (running) {            
+            currentFruit.draw(graphics, UNIT_SIZE); //shows fruit !
 
             graphics.setColor(Color.white);
             graphics.fillRect(x[0], y[0], UNIT_SIZE, UNIT_SIZE);
@@ -154,9 +157,21 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void addFood() {
-        foodX = random.nextInt((int)(WIDTH / UNIT_SIZE))*UNIT_SIZE;
-        foodY = random.nextInt((int)(HEIGHT / UNIT_SIZE))*UNIT_SIZE;
+        foodX = random.nextInt((int)(WIDTH / UNIT_SIZE)) * UNIT_SIZE;
+        foodY = random.nextInt((int)(HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
+
+        int randomValue = random.nextInt(10);
+        
+        if(randomValue < 7){ //70% chance
+            currentFruit = new Fruit(foodX, foodY, 1);
+        }else if(randomValue >= 7 && randomValue < 9){ //20%
+            currentFruit = new Banana(foodX, foodY, 3);
+        }else{ //remaining 10% chance
+            currentFruit = new Orange(foodX, foodY, 5);
+        }
+        
     }
+
 
     public void checkHit() {
         // check if head run into its body
