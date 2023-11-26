@@ -17,11 +17,11 @@ public class GamePanel extends JPanel implements ActionListener{
         System.out.println(x);
     }
     
-    private static final long serialVersionUID = 1L; //oten
+    private static final long serialVersionUID = 1L;
 
-    static final int WIDTH = 500;
-    static final int HEIGHT = 500;
-    static final int UNIT_SIZE = 20;
+    static final int WIDTH = 600;
+    static final int HEIGHT = 600;
+    static final int UNIT_SIZE = 25;
     static final int NUMBER_OF_UNITS = (WIDTH * HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
 
     // hold x and y coordinates for body parts of the snake
@@ -45,12 +45,53 @@ public class GamePanel extends JPanel implements ActionListener{
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
         play();
+        
+         this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+                if(!running){
+                // Check if the click was within the bounds of the restart cuz those coordinates is where Restart is
+                if (mouseX >= 150 && mouseX <= 260 && mouseY >= 370 && mouseY <= 420) {
+                    
+                    restartGame();
+                }
+                else if (mouseX >= 390 && mouseX <= 500 && mouseY >= 380 && mouseY <= 410) {
+                        
+                     System.exit(0);
+                }
+                }
+            }
+        });
+        
     }	
+     private void restartGame() {
+        length = 5; // Reset snake length
+    foodEaten = 0; // Reset score
+    direction = 'R'; // Reset snake direction
+    running = true; // Set game state to running
+    
+    int initialSnakeX = WIDTH / 2; // Set initial X coordinate
+    int initialSnakeY = HEIGHT / 2; // Set initial Y coordinate
+
+     for (int i = 0; i < length; i++) {
+        x[i] = initialSnakeX - i * UNIT_SIZE; // Adjust X-coordinate for each segment
+        y[i] = initialSnakeY; // Set Y-coordinate (same for all segments)
+    }
+
+    // Add initial food after restarting
+    addFood();
+
+    // Start the game loop again if needed
+    if (!timer.isRunning()) {
+        timer.start();
+    }
+    }
 
     public void play() {
         addFood();
         running = true;
-
         timer = new Timer(80, this);
         timer.start();	
     }
@@ -145,6 +186,14 @@ public class GamePanel extends JPanel implements ActionListener{
         graphics.setFont(new Font("Sans serif", Font.ROMAN_BASELINE, 25));
         metrics = getFontMetrics(graphics.getFont());
         graphics.drawString("Score: " + foodEaten, (WIDTH - metrics.stringWidth("Score: " + foodEaten)) / 2, graphics.getFont().getSize());
+        
+        graphics.setColor(Color.white);
+        graphics.setFont(new Font("Ink Free", Font.ROMAN_BASELINE, 30));        
+        graphics.drawString("Restart", 150, 400);
+        
+        graphics.setColor(Color.white);
+        graphics.setFont(new Font("Ink Free", Font.ROMAN_BASELINE, 30));
+        graphics.drawString("Exit", 390, 400);
     }
 
     @Override
