@@ -17,7 +17,7 @@ public class GamePanel extends JPanel implements ActionListener{
         System.out.println(x);
     }
     
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; //oten
 
     static final int WIDTH = 500;
     static final int HEIGHT = 500;
