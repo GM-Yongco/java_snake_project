@@ -119,7 +119,7 @@ public class GamePanel extends JPanel implements ActionListener{
     private void drawBackground(Graphics graphics) {
         // Draw the grid of green and light green boxes
         for (int row = 0; row < HEIGHT / UNIT_SIZE; row++) {
-            for (int col = 0; col < WIDTH / UNIT_SIZE; col++) {
+            for (int col = 0; col < WIDTH / UNIT_SIZE; col++) { 
                 // Alternate between green and light green based on row and column indices
 //                Color boxColor = (row + col) % 2 == 0 ? new Color(99, 229, 80) : new Color(177, 243, 73);
 //                Color boxColor = (row + col) % 2 == 0 ? new Color(194, 247, 143) : new Color(178, 241, 112);
@@ -164,29 +164,34 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void draw(Graphics graphics) {
-        if (running) {
-            // Adjust the fruit position based on the snake's head position
-            currentFruit.draw(graphics, UNIT_SIZE);
+    if (running) {
+        // Adjust the fruit position based on the snake's head position
+        currentFruit.draw(graphics, UNIT_SIZE);
 
-            // Draw the head with a slightly darker purple color
-            graphics.setColor(new Color(136, 92, 152));  // Slightly darker purple color
-            graphics.fillRect(x[0], y[0], UNIT_SIZE, UNIT_SIZE);
+        graphics.setColor(new Color(136, 92, 152));  
+        graphics.fillRect(x[0], y[0], UNIT_SIZE, UNIT_SIZE);
+        // Draw an arc to create the curved tip of the head
+         graphics.fillArc(x[0] - UNIT_SIZE / 2, y[0], UNIT_SIZE * 2, UNIT_SIZE, 45, 90); 
+        graphics.setColor(Color.BLACK);
+        graphics.fillOval(x[0] + 3, y[0] + 3, 6, 6); // Left eye
+        graphics.fillOval(x[0] + 13, y[0] + 3, 6, 6); // Right eye
 
-            // Draw the body and tail with the same color
-            for (int i = 1; i < length; i++) {
-                graphics.setColor(new Color(166, 142, 192));  // Same color as the head
-                graphics.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
-            }
-
-            graphics.setColor(Color.white);
-            graphics.setFont(new Font("Sans serif", Font.ROMAN_BASELINE, 25));
-            FontMetrics metrics = getFontMetrics(graphics.getFont());
-            graphics.drawString("Score: " + foodEaten, (WIDTH - metrics.stringWidth("Score: " + foodEaten)) / 2, graphics.getFont().getSize());
-
-        } else {
-            gameOver(graphics);
+        // Draw the body and tail with the same color
+           for (int i = 1; i < length; i++) {
+            graphics.setColor(new Color(166, 142, 192));  // Same color as the head
+            graphics.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
         }
+        
+        // Draw score
+        graphics.setColor(Color.white);
+        graphics.setFont(new Font("Sans serif", Font.ROMAN_BASELINE, 25));
+        FontMetrics metrics = getFontMetrics(graphics.getFont());
+        graphics.drawString("Score: " + foodEaten, (WIDTH - metrics.stringWidth("Score: " + foodEaten)) / 2, graphics.getFont().getSize());
+    } else {
+        gameOver(graphics);
     }
+}
+
 
 
 
@@ -241,10 +246,7 @@ public class GamePanel extends JPanel implements ActionListener{
         }
 
         // check if head run into walls
-        if (x[0] < 0 || x[0] > WIDTH || y[0] < 0 || y[0] > HEIGHT) {
-            running = false;
-        }
-
+      
         if(!running) {
             timer.stop();
         }
