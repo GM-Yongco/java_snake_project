@@ -192,7 +192,6 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 }
 
-
     public void addFood() {
         foodX = random.nextInt((int)(WIDTH / UNIT_SIZE)) * UNIT_SIZE;
         foodY = random.nextInt((int)(HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
