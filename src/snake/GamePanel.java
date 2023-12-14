@@ -8,6 +8,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.Random;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 
 import javax.swing.JPanel;
 
@@ -103,7 +107,28 @@ public class GamePanel extends JPanel implements ActionListener{
     @Override
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
+
+        // Draw the background grid
+        drawBackground(graphics);
+
+        // Draw the game elements (snake, fruit, score, etc.)
         draw(graphics);
+    }
+    
+    // New method to draw the background grid
+    private void drawBackground(Graphics graphics) {
+        // Draw the grid of green and light green boxes
+        for (int row = 0; row < HEIGHT / UNIT_SIZE; row++) {
+            for (int col = 0; col < WIDTH / UNIT_SIZE; col++) {
+                // Alternate between green and light green based on row and column indices
+//                Color boxColor = (row + col) % 2 == 0 ? new Color(99, 229, 80) : new Color(177, 243, 73);
+//                Color boxColor = (row + col) % 2 == 0 ? new Color(194, 247, 143) : new Color(178, 241, 112);
+                Color boxColor = (row + col) % 2 == 0 ? new Color(186, 249, 133) : new Color(168, 237, 104);
+
+                graphics.setColor(boxColor);
+                graphics.fillRect(col * UNIT_SIZE, row * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE);
+            }
+        }
     }
 
     public void move() {
@@ -138,24 +163,18 @@ public class GamePanel extends JPanel implements ActionListener{
 
     }
 
-    public void checkFood() {
-        if(x[0] == foodX && y[0] == foodY) {
-            length += currentFruit.pointVal;
-            foodEaten += currentFruit.pointVal; //adds fruit's pointVal to the score
-            addFood();
-        }
-    }
-
     public void draw(Graphics graphics) {
         if (running) {
             // Adjust the fruit position based on the snake's head position
             currentFruit.draw(graphics, UNIT_SIZE);
 
-            graphics.setColor(Color.white);
+            // Draw the head with a slightly darker purple color
+            graphics.setColor(new Color(136, 92, 152));  // Slightly darker purple color
             graphics.fillRect(x[0], y[0], UNIT_SIZE, UNIT_SIZE);
 
+            // Draw the body and tail with the same color
             for (int i = 1; i < length; i++) {
-                graphics.setColor(new Color(40, 200, 150));
+                graphics.setColor(new Color(166, 142, 192));  // Same color as the head
                 graphics.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
             }
 
@@ -168,6 +187,8 @@ public class GamePanel extends JPanel implements ActionListener{
             gameOver(graphics);
         }
     }
+
+
 
 
     public void addFood() {
@@ -183,9 +204,33 @@ public class GamePanel extends JPanel implements ActionListener{
         }else{ //remaining 10% chance
             currentFruit = new Orange(foodX, foodY, 5);
         }
-        
     }
+    
+    public void checkFood() {
+        if (x[0] == foodX && y[0] == foodY) {
+            length += currentFruit.pointVal;
+            foodEaten += currentFruit.pointVal; // adds fruit's pointVal to the score
+            playEatingSound(); // play the eating sound
+            addFood();
+        }
+    }
+    
+    private void playEatingSound() {
+        try {
+            // Load the audio file using class loader (assumes it's in the classpath)
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    getClass().getResource("/assets/sounds/fruit-eat.wav")
+            );
 
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+
+            // Play the clip
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void checkHit() {
         // check if head run into its body
