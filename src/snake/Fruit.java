@@ -5,48 +5,32 @@
 package snake;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  *
  * @author chanchan
  */
 public class Fruit {
-    
-    int x, y;
-    int pointVal; // points per fruit
-    
-    public Fruit(int x, int y, int pointVal){
+    protected int x, y;
+    protected int pointVal;
+    protected BufferedImage image;
+
+    public Fruit(int x, int y, int pointVal, String imagePath) {
         this.x = x;
         this.y = y;
         this.pointVal = pointVal;
+        try {
+            this.image = ImageIO.read(getClass().getResource(imagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Error loading image: " + imagePath);
+        }
     }
-    
-    public void draw(Graphics graphics, int unitSize){
-        graphics.setColor(new Color(210, 115, 90));
-        graphics.fillOval(x, y, unitSize, unitSize);
-    }
-}
 
-class Banana extends Fruit {
-    public Banana(int x, int y, int pointVal){
-        super(x, y, pointVal);
-    }
-    
-    @Override
-    public void draw(Graphics graphics, int unitSize){
-        graphics.setColor(new Color(255, 255, 0));
-        graphics.fillOval(x, y, unitSize, unitSize);
-    }
-}
-
-class Orange extends Fruit {
-    public Orange(int x, int y, int pointVal){
-        super(x, y, pointVal);
-    }
-    
-    @Override
-    public void draw(Graphics graphics, int unitSize){
-        graphics.setColor(new Color(255, 165, 0));
-        graphics.fillOval(x, y, unitSize, unitSize);
+    public void draw(Graphics graphics, int unitSize) {
+        graphics.drawImage(image, x, y, unitSize, unitSize, null);
     }
 }
