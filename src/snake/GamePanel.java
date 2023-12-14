@@ -107,11 +107,10 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void move() {
-        int i;
-        for (i = length; i > 0; i--) {
+        for (int i = length - 1; i > 0; i--) {
             // shift the snake one unit to the desired direction to create a move
-            x[i] = x[i-1];
-            y[i] = y[i-1];
+            x[i] = x[i - 1];
+            y[i] = y[i - 1];
         }
 
         if (direction == 'L') {
@@ -122,28 +121,42 @@ public class GamePanel extends JPanel implements ActionListener{
             y[0] = y[0] - UNIT_SIZE;
         } else {
             y[0] = y[0] + UNIT_SIZE;
-        }	
+        }
+        
+        //lets the snake tp to the other side
+        if (x[0] < 0) {
+            x[0] = WIDTH - UNIT_SIZE;
+        } else if (x[0] >= WIDTH) {
+            x[0] = 0;
+        }
+
+        if (y[0] < 0) {
+            y[0] = HEIGHT - UNIT_SIZE;
+        } else if (y[0] >= HEIGHT) {
+            y[0] = 0;
+        }
+
     }
 
     public void checkFood() {
         if(x[0] == foodX && y[0] == foodY) {
-            length++;
+            length += currentFruit.pointVal;
             foodEaten += currentFruit.pointVal; //adds fruit's pointVal to the score
             addFood();
         }
     }
 
     public void draw(Graphics graphics) {
-
-        if (running) {            
-            currentFruit.draw(graphics, UNIT_SIZE); //shows fruit !
+        if (running) {
+            // Adjust the fruit position based on the snake's head position
+            currentFruit.draw(graphics, UNIT_SIZE);
 
             graphics.setColor(Color.white);
             graphics.fillRect(x[0], y[0], UNIT_SIZE, UNIT_SIZE);
 
             for (int i = 1; i < length; i++) {
-                    graphics.setColor(new Color(40, 200, 150));
-                    graphics.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                graphics.setColor(new Color(40, 200, 150));
+                graphics.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
             }
 
             graphics.setColor(Color.white);
@@ -155,6 +168,7 @@ public class GamePanel extends JPanel implements ActionListener{
             gameOver(graphics);
         }
     }
+
 
     public void addFood() {
         foodX = random.nextInt((int)(WIDTH / UNIT_SIZE)) * UNIT_SIZE;

@@ -13,7 +13,7 @@ import java.awt.*;
 public class Fruit {
     
     int x, y;
-    int pointVal; //points per fruit
+    int pointVal; // points per fruit
     
     public Fruit(int x, int y, int pointVal){
         this.x = x;
@@ -27,7 +27,7 @@ public class Fruit {
     }
 }
 
-class Banana extends Fruit{
+class Banana extends Fruit {
     public Banana(int x, int y, int pointVal){
         super(x, y, pointVal);
     }
@@ -39,7 +39,7 @@ class Banana extends Fruit{
     }
 }
 
-class Orange extends Fruit{
+class Orange extends Fruit {
     public Orange(int x, int y, int pointVal){
         super(x, y, pointVal);
     }
