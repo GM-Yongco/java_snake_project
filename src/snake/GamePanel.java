@@ -277,6 +277,13 @@ public class GamePanel extends JPanel implements ActionListener{
                 checkFood();
                 checkHit();
         }
+        
+        //HANDLE THE TICKSPEED OF THE GAME
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         repaint();
     }
 
