@@ -12,6 +12,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
+import java.util.Arrays ;
 
 import javax.swing.JPanel;
 
@@ -31,7 +32,7 @@ public class GamePanel extends JPanel implements ActionListener{
     // hold x and y coordinates for body parts of the snake
     final int x[] = new int[NUMBER_OF_UNITS];
     final int y[] = new int[NUMBER_OF_UNITS];
-
+   
     // initial length of the snake
     int length = 5;
     int foodEaten;
@@ -55,6 +56,9 @@ public class GamePanel extends JPanel implements ActionListener{
         this.addKeyListener(new MyKeyAdapter());
         currentFruit = new Fruit(0, 0, 1, "");
         play();
+        
+        Arrays.fill(x, -1);
+        Arrays.fill(y, -1);
         
          this.addMouseListener(new MouseAdapter() {
             @Override
@@ -85,11 +89,14 @@ public class GamePanel extends JPanel implements ActionListener{
         int initialSnakeX = WIDTH / 2; // Set initial X coordinate
         int initialSnakeY = HEIGHT / 2; // Set initial Y coordinate
 
+        Arrays.fill(x, -1);
+        Arrays.fill(y, -1);
+        
          for (int i = 0; i < length; i++) {
             x[i] = initialSnakeX - i * UNIT_SIZE; // Adjust X-coordinate for each segment
             y[i] = initialSnakeY; // Set Y-coordinate (same for all segments)
         }
-
+       
         // Add initial food after restarting
         addFood();
 
@@ -100,6 +107,10 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void play() {
+        
+        Arrays.fill(x, -1);
+        Arrays.fill(y, -1);
+        
         addFood();
         running = true;
         timer = new Timer(80, this);
@@ -179,7 +190,11 @@ public class GamePanel extends JPanel implements ActionListener{
         graphics.fillOval(x[0] + 13, y[0] + 3, 6, 6); // Right eye
 
         // Draw the body and tail with the same color
-           for (int i = 1; i < length; i++) {
+        for (int i = 1; i < length; i++) {
+            if(x[i] == -1 || y[i] == -1){
+                break;
+            } 
+            
             graphics.setColor(new Color(166, 142, 192));  // Same color as the head
             graphics.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
         }
@@ -273,16 +288,16 @@ public class GamePanel extends JPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent arg0) {
         if (running) {
-                move();
-                checkFood();
-                checkHit();
+            move();
+            checkFood();
+            checkHit();
         }
         
         //HANDLE THE TICKSPEED OF THE GAME
         can_change_direction = true;
         
         try {
-            Thread.sleep(100);
+            Thread.sleep(10);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
